@@ -4,7 +4,7 @@ const crearUsuario = (req = request, res = response) => {
     
     const {name, email, password} = req.body;
     
-    res.json({
+    res.status(201).json({
         ok: true,
         msg: 'registro',
         name, 
@@ -16,9 +16,9 @@ const crearUsuario = (req = request, res = response) => {
 
 const loginUsuario = (req = request, res = response) => {
    
-    const {name, email, password} = req.body;
+    const {email, password} = req.body;
     
-    res.json({
+    res.status(200).json({
         ok: true,
         msg: 'login',
         email,
