@@ -1,8 +1,14 @@
-const express = require('express')
+const express = require('express');
+const { dbConnection } = require('./db/config');
 require('dotenv').config();
 
 
-const app = express()
+const app = express();
+
+// DB
+dbConnection();
+
+
 
 // Directorio publico
 app.use(express.static('public'))
