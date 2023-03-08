@@ -1,6 +1,7 @@
 const {response, request} = require('express')
 const bcrypt = require('bcryptjs')
 const User = require('../models/User')
+const {generarJWT} = require('../helpers/jwt')
 
 const crearUsuario = async (req = request, res = response) => {
     
@@ -21,11 +22,15 @@ const crearUsuario = async (req = request, res = response) => {
         user.password = bcrypt.hashSync(password, salt);
 
         await user.save()
+
+        // Generar JWT
+        const token = await generarJWT(user.id, user.name)
         
         res.status(201).json({
             ok: true,
             uid: user.id,
-            name: user.name
+            name: user.name,
+            token
         })
     } catch (error) {
         console.log(error);
@@ -65,10 +70,14 @@ const loginUsuario = async (req = request, res = response) => {
         }
 
         // Generar JWT
+        const token = await generarJWT(user.id, user.name)
+
+
         res.status(200).json({
             ok: true,
             uid: user.id,
-            name: user.name
+            name: user.name,
+            token
         })
 
         
@@ -82,11 +91,18 @@ const loginUsuario = async (req = request, res = response) => {
 }
 
 
-const revalidarToken = (req, res = response) => {
-    console.log('Se requiere el /')
+const revalidarToken = async (req, res = response) => {
+
+    const uid = req.uid;
+    const name = req.name
+
+      // generar un nuevo JWT y retornarlo en esta petición
+      const token = await generarJWT(uid, name)
+    
     res.json({
         ok: true,
-        msg: 'renew'
+        msg: 'renew',
+        token
     })
 }
 
