@@ -1,11 +1,13 @@
 const { request, response } = require("express")
+const Evento = require('../models/Event')
 
 const getEventos = async (req = request, res = response) => {
+    
     try {
-
-        return res.status(200).json({
+        const eventos = await Evento.find();
+        res.status(200).json({
             ok: true,
-            msg: 'obteniendo eventos'
+            eventos
         })
 
 
@@ -19,15 +21,22 @@ const getEventos = async (req = request, res = response) => {
 }
 
 const crearEvento = async (req = request, res = response) => {
+    const evento = new Evento(req.body)
+
     try {
 
-        return res.status(201).json({
+        evento.user = req.uid;
+
+        const eventDB = await evento.save()
+
+        res.status(201).json({
             ok: true,
-            msg: 'Crear evento'
+            msg: eventDB
         })
         
     } catch (error) {
-        return res.status(500).json({
+        console.log(error)
+        res.status(500).json({
             ok: false,
             msg: 'Error a crear evento'
         })
